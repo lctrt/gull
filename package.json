@@ -1,0 +1,17 @@
+{
+  "name": "gull",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Quentin Leonetti <q.leonetti@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "dgram": "^1.0.1",
+    "express": "^4.17.1",
+    "socket.io": "^2.2.0",
+    "tone": "^13.4.9"
+  }
+}
