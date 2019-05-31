@@ -12,12 +12,8 @@ const to35ths = (letter, total) =>
     (parseInt(letter,36)) * total / 35;
 
 const play = (args = []) => {
-    const [chan = 0, start = 0, duration = 'z'] = args
-    const length = samplers[chan].length();
-
-    length && channels[chan] && channels[chan].map(ch => {
-        ch.player.buffer && ch.player.start('+0', to35ths(start, length), to35ths(duration, length, 1));
-    });
+    const [chan = 0, start, duration] = args
+    channels[chan] && channels[chan].forEach(ch => ch(start,duration));
 }
 
 const loadUI = () => {
@@ -53,28 +49,70 @@ socket.on('message', ({type, ...rest}) => {
 });
 
 
-const parseEditorContent = (text) => {
-    channels = {}
-    text.split('\n').map(function(line) {
-        const rgx = /[\[]([0-9a-zA-Z])[\]][\[]([0-9a-zA-Z])[\]]/;
-        const result = rgx.exec(line)
-        if (result) {
-            const chanId = result[1];
-            const sampleId = result[2];
-            const sampleUrl = sampleMap[sampleId]
-            const player = new Tone.Player(sampleUrl).toMaster();
-            if (!channels[chanId]) {
-                channels[chanId] = [];
+
+const Machine = (blocks) => {
+    // first block needs to be a sampler, other blocks treated as effects
+    const [firstBlock, ...rest] = blocks;
+    if (!firstBlock || firstBlock[0] !== 'S') return null;
+    const channelId = firstBlock[1]
+    const sampleId = firstBlock[2]
+    const sampleUrl = sampleMap[sampleId]
+    const player = new Tone.Player(sampleUrl);
+    const length = () => player.buffer._buffer.duration;
+    let play = (s = 0, d = 'z') => 
+        player.toMaster().start("+0",to35ths(s, length()), to35ths(d, length()));
+
+    blocks.forEach(block => {
+        switch(block[0]) {
+            case 'C': {
+                const start = block[1];
+                const duration = block[2];
+                play = (s = start,d = duration) =>
+                    player.toMaster().start("+0",to35ths(s, length()), to35ths(d, length()));
+                break;
             }
-            channels[chanId] = [
-                ...channels[chanId],
-                {
-                    player,
-                    length: () => player.buffer._buffer.duration
-                }
+        }
+    });
+
+    return {
+        play,
+        channelId
+    };
+};
+
+const splitBy = (list, groupSize) => 
+    list.map((item, index) => 
+        index % groupSize === 0 ? list.slice(index, index + groupSize) : null
+    )
+    .filter(item => item);
+
+
+const parseEditorContent = (text) => {
+    let newChannels = {}
+
+    text.split('\n').forEach(function(line) {
+        if (line == '') return null;
+        const blocks = splitBy(
+            line.split('').filter(c => c !== ' '),
+            3
+        ).filter(group => group.length === 3);
+
+        const machine = Machine(blocks);
+        if (machine != null) {
+            const {channelId, play} = machine;
+            if (!newChannels[channelId]) {
+                newChannels[channelId] = [];
+            }
+            newChannels[channelId] = [
+                ...newChannels[channelId],
+                play
             ];
         }
     })
+
+    setTimeout(function() {
+        channels = newChannels
+    }, 200);
 }
 
 const editorCheck = () => {

@@ -27,15 +27,18 @@ Samples should be in `wav` format and go into `/samples`. The server will hot re
 ## Creating sampler channels
 
 A channel is written on one line of the editor. Channels can share the same id to be triggered together.
-First value is the channel id, second value is the sample id.
 
-```
-[0][0]
+Channels are composed by blocks, each block start with a capital letter then is followed by base 36 parameters.
 
-[0][4]
+2 blocks are available at the moment:
 
-[1][2]
-```
+* S(chan, sampler): sampler block, must be present at the start of a chain
+* C(start, duration): sample cutter, set cutting default (can be overwritten by message on a trigger basis)
+
+Possible upcoming blocks: 
+
+* D(time,feedback) : delay
+* R(decay, wet): reverb
 
 ## Remote Control
 
