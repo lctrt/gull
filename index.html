@@ -6,15 +6,34 @@
         <style>
             body {
                 background: black;
+                font-family: 'Courier New', Courier, monospace;
             }
-            .trig {
+            .sample {
                 color: white;
                 padding: 10px;
+            }
+
+            #ui {
+                float:left;
+                border-right: 1px solid white;
+            }
+
+            #editor {
+                margin: 10px;
+                background: black;
+                color: white;
+                border: 0;
+                font-size: 14px;
+            }
+            #editor:focus {
+                outline: 0;
+                background-color: #050505;
             }
         </style>
     </head>
     <body>
-<div id="ui"></div> 
+        <div id="ui"></div> 
+        <textarea id="editor" autofocus rows="20">[0][1]</textarea>
         <script src="./main.js"></script>
     </body>
 </html>
