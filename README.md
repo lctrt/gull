@@ -50,13 +50,13 @@ Gull has up to 36 sampler voices. Commands can be sent through UDP via the port 
 
 The play command allows you to trigger samples
 
-| Command  | Channel | Start | Duration | Velocity |
-| :-       | :-:     | :-:   | :-:      | :-:      |
-| `0`      | 0       | 0     | 100%     |          |
-| `04c`    | 0       | 4     | C        | _64_     |
-| `04cf`   | 0       | 4     | C        | 127      |
+| Command  | Channel | Octave | Fine | Velocity |
+| :-       | :-:     | :-:    | :-:  | :-:      |
+| `0`      | 0       | 0      | 0    |          |
+| `04c`    | 0       | 4      | C    | _64_     |
+| `04cf`   | 0       | 4      | C    | 127      |
 
-The start position and duration are expressed in 35ths of the sample total duration, 0 being the lowest value and Z the maximum.
+The fine setting is in 35ths of an octave
 
 ### Settings
 

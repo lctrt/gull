@@ -7,16 +7,24 @@ const Machine = (blocks) => {
     const sampleUrl = sampleMap[sampleId]
     const player = new Tone.Player(sampleUrl);
     const length = () => player.buffer._buffer.duration;
-    let play = (s = 0, d = 'z') => 
-        player.toMaster().start("+0",to35ths(s, length()), to35ths(d, length()));
+    const adjustPlaybackRate = (octave, fine) => {
+        player.playbackRate = fromBase36(octave) + to35ths(fine, 1);
+    };
+
+    let play = (octave = 1, fine = 0) => {
+        adjustPlaybackRate(octave, fine);
+        player.toMaster().start();
+    }
 
     blocks.forEach(block => {
         switch(block[0]) {
             case 'C': {
                 const start = block[1];
                 const duration = block[2];
-                play = (s = start,d = duration) =>
-                    player.toMaster().start("+0",to35ths(s, length()), to35ths(d, length()));
+                play = (octave = 1, fine = 0) => {
+                    adjustPlaybackRate(octave, fine);
+                    player.toMaster().start("+0",to35ths(start, length()), to35ths(duration, length()));
+                }
                 break;
             }
         }

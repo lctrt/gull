@@ -1,5 +1,9 @@
+const fromBase36 = (code) => 
+    parseInt(code,36);
+
 const to35ths = (letter, total) => 
-    (parseInt(letter,36)) * total / 35;
+    (fromBase36(letter)) * total / 35;
+
 
 const splitBy = (list, groupSize) => 
     list.map((item, index) => 
