@@ -35,7 +35,7 @@ Channels are composed by blocks, each block start with a capital letter then is 
 2 blocks are available at the moment:
 
 * S(chan, sampler): sampler block, must be present at the start of a chain
-* C(start, duration): sample cutter, set cutting default (can be overwritten by message on a trigger basis)
+* C(start, duration): sample cutter
 
 Possible upcoming blocks: 
 
@@ -48,7 +48,7 @@ Gull has up to 36 sampler voices. Commands can be sent through UDP via the port 
 
 ### Play
 
-The play command allows you to trigger samples
+The play command allows you to trigger samples.
 
 | Command  | Channel | Octave | Fine | Velocity |
 | :-       | :-:     | :-:    | :-:  | :-:      |
