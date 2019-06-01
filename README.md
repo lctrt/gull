@@ -14,11 +14,13 @@ Special thanks to [Tone.js](https://tonejs.github.io), the scope of work would b
 ## Install & Run
 
 TODO / add details / package into electron app
+If you want to build Gull yourself, follow these steps:
 
 ```
-npm i
-node server.js
-http-server index.html
+git clone https://github.com/qleonetti/gull.git
+cd gull
+npm install
+npm start
 ```
 
 ## Config
