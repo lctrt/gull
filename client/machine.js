@@ -1,6 +1,5 @@
 const SoundGenerator = (block) => {
     if (!block) return false;
-    console.log(block)
     switch(block[0]) {
         case 'P': 
             return Player(block);
