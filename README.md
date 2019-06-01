@@ -34,7 +34,7 @@ Channels are composed by blocks, each block start with a capital letter then is 
 
 2 blocks are available at the moment:
 
-* S(chan, sampler): sampler block, must be present at the start of a chain
+* P(chan, sampler): sample player block, must be present at the start of a chain
 * C(start, duration): sample cutter
 
 Possible upcoming blocks: 
