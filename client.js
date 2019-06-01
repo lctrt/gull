@@ -38,6 +38,7 @@ const listener = Listener(loadSamples, play);
 
 const replaceChar = (line, rowId, char) => {
     const chars = line.split('');
+    console.log(chars, rowId);
     if (chars.length > rowId) {
         chars[rowId] = char;
     }
