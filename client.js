@@ -1,5 +1,4 @@
 const uiContext = document.getElementById('ui');
-const socket = io('http://localhost:3000');
 
 let samplers = [];
 let sampleMap = {};
@@ -7,9 +6,6 @@ let sampleMap = {};
 const editor = document.getElementById('editor');
 let editorContent = '';
 let channels = {};
-
-const to35ths = (letter, total) => 
-    (parseInt(letter,36)) * total / 35;
 
 const play = (args = []) => {
     const [chan = 0, start, duration] = args
@@ -38,54 +34,7 @@ const loadSamples = ({files=[]}) => {
     loadUI();
 };
 
-socket.on('message', ({type, ...rest}) => {
-    switch(type) {
-        case 'filechange':
-            loadSamples(rest);
-            break;
-        case 'trig':
-            play(rest.msg.split(''));
-    }
-});
-
-
-
-const Machine = (blocks) => {
-    // first block needs to be a sampler, other blocks treated as effects
-    const [firstBlock, ...rest] = blocks;
-    if (!firstBlock || firstBlock[0] !== 'S') return null;
-    const channelId = firstBlock[1]
-    const sampleId = firstBlock[2]
-    const sampleUrl = sampleMap[sampleId]
-    const player = new Tone.Player(sampleUrl);
-    const length = () => player.buffer._buffer.duration;
-    let play = (s = 0, d = 'z') => 
-        player.toMaster().start("+0",to35ths(s, length()), to35ths(d, length()));
-
-    blocks.forEach(block => {
-        switch(block[0]) {
-            case 'C': {
-                const start = block[1];
-                const duration = block[2];
-                play = (s = start,d = duration) =>
-                    player.toMaster().start("+0",to35ths(s, length()), to35ths(d, length()));
-                break;
-            }
-        }
-    });
-
-    return {
-        play,
-        channelId
-    };
-};
-
-const splitBy = (list, groupSize) => 
-    list.map((item, index) => 
-        index % groupSize === 0 ? list.slice(index, index + groupSize) : null
-    )
-    .filter(item => item);
-
+const listener = Listener(loadSamples, play);
 
 const parseEditorContent = (text) => {
     let newChannels = {}
