@@ -40,6 +40,7 @@ const Machine = (blocks) => {
     const soundGenerator = SoundGenerator(firstBlock);
     if (!soundGenerator) return null;
     let {
+        type,
         channelId,
         player,
         length,
@@ -50,11 +51,13 @@ const Machine = (blocks) => {
     blocks.forEach(block => {
         switch(block[0]) {
             case 'C': {
-                const start = block[1];
-                const duration = block[2];
-                play = (octave = 1, fine = 0) => {
-                    adjustPlaybackRate(octave, fine);
-                    player.toMaster().start("+0",to35ths(start, length()), to35ths(duration, length()));
+                if (type === "PLAYER") {
+                    const start = block[1];
+                    const duration = block[2];
+                    play = (octave = 1, fine = 0) => {
+                        adjustPlaybackRate(octave, fine);
+                        player.toMaster().start("+0",to35ths(start, length()), to35ths(duration, length()));
+                    }
                 }
                 break;
             }
