@@ -6,8 +6,15 @@ const Listener = (onLoadSamples, onPlay) => {
             case 'filechange':
                 onLoadSamples(rest);
                 break;
+            case 'edit':
+                const [rowId, lineId, char] = rest.msg.split('');
+                remoteEdit(rowId, lineId, char);
+                break;
             case 'trig':
                 onPlay(rest.msg.split(''));
+                break;
+            default:
+                console.log('unsupported message');
         }
     });
 

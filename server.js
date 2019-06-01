@@ -42,8 +42,12 @@ function Listener (socket) {
   this.server = dgram.createSocket('udp4')
 
   this.server.on('message', (msg, rinfo) => {
-    console.log(msg.toString(), rinfo);
-    socket.send({ type: 'trig', msg: msg.toString('utf-8') });
+    const message = msg.toString('utf-8');
+    if (message.startsWith('ED')) {
+      socket.send({ type: 'edit', msg: message.substring(2)})
+    } else {
+      socket.send({ type: 'trig', msg: message });
+    }
   })
 
   this.server.on('listening', () => {

@@ -36,6 +36,24 @@ const loadSamples = ({files=[]}) => {
 
 const listener = Listener(loadSamples, play);
 
+const replaceChar = (line, rowId, char) => {
+    const chars = line.split('');
+    return [
+        ...chars.slice(0,rowId),
+        char,
+        ...chars.slice(rowId+1, chars.length),
+    ].join('');
+};
+
+const remoteEdit = (rowId, lineId, char) => {
+    const lines = editor.value.split('\n')
+    editor.value = [
+        ...lines.slice(0, lineId),
+        replaceChar(lines[lineId],rowId, char),
+        ...lines.slice(lineId+1, lines.length)
+    ].join('\n');
+};
+
 const parseEditorContent = (text) => {
     let newChannels = {}
 
