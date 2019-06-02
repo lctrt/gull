@@ -15,7 +15,10 @@ npm start
 ```
 
 ## Config
-Samples should be in `wav` format and go into `/samples`. The server will hot reload when new samples are added.
+Samples should be in `wav` format.
+If you build yourself you can put your samples into `/samples`. You can select your own folder with `File > Select Sample Folder`
+
+~~The server will hot reload when new samples are added.~~ This got broken with the dynamic folder selection, will fix.
 
 ## Creating channels
 
