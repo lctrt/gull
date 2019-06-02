@@ -45,40 +45,13 @@ const replaceChar = (line, rowId, char) => {
 };
 
 const remoteEdit = (rowId, lineId, char) => {
+    Editor.remoteEditChar(rowId, lineId, char)
     const lines = editor.value.split('\n')
     if (lines.length > lineId)  {
         lines[lineId] = replaceChar(lines[lineId],rowId, char);
         editor.value = lines.join('\n');
     } 
 };
-
-const _parseEditorContent = (text) => {
-    let newChannels = {}
-
-    text.split('\n').forEach(function(line) {
-        if (line == '') return null;
-        const blocks = splitBy(
-            line.split('').filter(c => c !== ' '),
-            3
-        ).filter(group => group.length === 3);
-
-        const machine = Machine(blocks);
-        if (machine != null) {
-            const {channelId, play} = machine;
-            if (!newChannels[channelId]) {
-                newChannels[channelId] = [];
-            }
-            newChannels[channelId] = [
-                ...newChannels[channelId],
-                play
-            ];
-        }
-    })
-
-    setTimeout(function() {
-        channels = newChannels
-    }, 200);
-}
 
 const parseEditorContent = () => {
     let newChannels = {};
@@ -105,14 +78,5 @@ const parseEditorContent = () => {
         channels = newChannels
     }, 200);
 };
-
-const editorCheck = () => {
-    if (editor.value != editorContent) {
-        editorContent = editor.value;
-        parseEditorContent(editorContent);
-    }
-}
-
-setInterval(editorCheck, 200);
 
 Editor.onUpdate = parseEditorContent

@@ -24,8 +24,15 @@ const drawGrid = () => {
 
     for (let x = 0; x<36; x++) {
         for (let y = 0; y<36; y++) {
-            const char = gridData[y][x];
-            ctx.fillStyle = char == ''  ? '#555' : '#DDD';
+            let char = gridData[y][x];
+            if (x == cursorPos[0] && y == cursorPos[1]) {
+                if (char == '') {
+                    char = '@';
+                }
+                ctx.fillStyle = 'black';
+            } else {
+                ctx.fillStyle = char == ''  ? '#555' : '#DDD';
+            }
             ctx.fillText(char == '' ? '.' : char, offset * 0.5 + x * cellSize,  offset * 1.5 + y * cellSize);
         }
     }
@@ -49,7 +56,17 @@ const keyMap = {
 };
 
 const Editor = {
-    onUpdate : () => {}
+    onUpdate : () => {},
+    remoteEditChar: (x,y,char) => {
+        if (/[a-zA-Z0-9]/.test(char)) {
+            gridData[y][x] = char;
+            Editor.onUpdate();
+            clearCanvas();
+            drawCursor(cursorPos[0],cursorPos[1]);
+            drawGrid();
+
+        }
+    }
 };
 
 document.addEventListener('keyup', (e) => {
@@ -75,6 +92,7 @@ document.addEventListener('keyup', (e) => {
             const char = String.fromCharCode(event.keyCode);
             if (/[a-zA-Z0-9]/.test(char)) {
                 gridData[y][x] = char;
+                x = Math.min(35,x + 1)
                 Editor.onUpdate();
             } else {
             }
