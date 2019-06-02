@@ -52,7 +52,7 @@ const remoteEdit = (rowId, lineId, char) => {
     } 
 };
 
-const parseEditorContent = (text) => {
+const _parseEditorContent = (text) => {
     let newChannels = {}
 
     text.split('\n').forEach(function(line) {
@@ -80,6 +80,32 @@ const parseEditorContent = (text) => {
     }, 200);
 }
 
+const parseEditorContent = () => {
+    let newChannels = {};
+    gridData.forEach(function(line) {
+        const blocks = splitBy(
+            line.filter(c => c != ''),
+            3
+        ).filter(group => group.length === 3);
+        const machine = Machine(blocks);
+        if (machine != null) {
+            console.log(machine)
+            const {channelId, play} = machine;
+            if (!newChannels[channelId]) {
+                newChannels[channelId] = [];
+            }
+            newChannels[channelId] = [
+                ...newChannels[channelId],
+                play
+            ];
+        }
+    });
+
+    setTimeout(function() {
+        channels = newChannels
+    }, 200);
+};
+
 const editorCheck = () => {
     if (editor.value != editorContent) {
         editorContent = editor.value;
@@ -88,3 +114,5 @@ const editorCheck = () => {
 }
 
 setInterval(editorCheck, 200);
+
+Editor.onUpdate = parseEditorContent

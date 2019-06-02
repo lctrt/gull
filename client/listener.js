@@ -4,7 +4,6 @@ const Listener = (onLoadSamples, onPlay) => {
     socket.on('message', ({type, ...rest}) => {
         switch(type) {
             case 'filechange':
-                console.log(rest);
                 onLoadSamples(rest);
                 break;
             case 'edit':
