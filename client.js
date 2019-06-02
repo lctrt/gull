@@ -1,5 +1,4 @@
 const uiContext = document.getElementById('ui');
-
 let samplers = [];
 let sampleMap = {};
 
@@ -19,11 +18,11 @@ const loadUI = () => {
     });
 };
 
-const loadSamples = ({files=[]}) => {
+const loadSamples = ({files=[], path= ''}) => {
     const samples = files.filter((name) => name.includes('.wav'))
     samplers = samples.map(function (filename,i) {
-        sampleMap[i] = `./samples/${filename}`;
-        const player = new Tone.Player(`./samples/${filename}`).toMaster();
+        sampleMap[i] = `${path}/${filename}`;
+        const player = new Tone.Player(`${path}/${filename}`).toMaster();
 
         return {
             player,

@@ -4,12 +4,13 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const dgram = require('dgram');
 
+global.samplePath = __dirname + '/samples';
+
 function Socket () {
-  const path = __dirname + '/samples'
   const loadSamples = () => {
-    fs.readdir(path, (err, items) => {
+    fs.readdir(global.samplePath, (err, items) => {
       console.log(items);
-      io.send({ type: 'filechange', files: items});
+      io.send({ type: 'filechange', files: items, path: global.samplePath});
       for (var i=0; i<items.length; i++) {
           console.log(items[i]);
       }
@@ -30,10 +31,14 @@ function Socket () {
   console.log('listening on *:3000');
   });
 
+  // TODO: reimplement sample reload with new dynamic path
   // watch for sample changes and send to client for reload
-  fs.watch(path, {persistent: true}, loadSamples);
+  // fs.watch(path, {persistent: true}, loadSamples);
 
-  return io;
+  return {
+    io,
+    loadSamples
+  };
 }
 
 
@@ -44,9 +49,9 @@ function Listener (socket) {
   this.server.on('message', (msg, rinfo) => {
     const message = msg.toString('utf-8');
     if (message.startsWith('ED')) {
-      socket.send({ type: 'edit', msg: message.substring(2)})
+      socket.io.send({ type: 'edit', msg: message.substring(2)})
     } else {
-      socket.send({ type: 'trig', msg: message });
+      socket.io.send({ type: 'trig', msg: message });
     }
   })
 
@@ -63,5 +68,6 @@ function Listener (socket) {
   this.server.bind(49161) // TODO - make this configurable
 }
 
-Listener(Socket());
+global.socket = Socket();
+Listener(global.socket);
 
