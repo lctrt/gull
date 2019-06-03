@@ -20,6 +20,9 @@ If you build yourself you can put your samples into `/samples`. You can select y
 
 ~~The server will hot reload when new samples are added.~~ This got broken with the dynamic folder selection, will fix.
 
+## editor commands:
+* `meta` + arrow: fast cursor move (6 chars)
+
 ## Creating channels
 
 A channel is written on one line of the editor. Channels can share the same id to be triggered together.

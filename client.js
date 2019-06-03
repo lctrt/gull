@@ -1,6 +1,4 @@
 const uiContext = document.getElementById('ui');
-let samplers = [];
-let sampleMap = {};
 
 const editor = document.getElementById('editor');
 let editorContent = '';
@@ -10,13 +8,6 @@ const play = (args = []) => {
     const [chan = 0, start, duration] = args
     channels[chan] && channels[chan].forEach(ch => ch(start,duration));
 }
-
-const loadUI = () => {
-    uiContext.innerHTML = '';
-    samplers.forEach(function(sampler, i) {
-        uiContext.insertAdjacentHTML('beforeend', `<div class="sample">[${i}] ${sampler.name}</div>`);
-    });
-};
 
 const loadSamples = ({files=[], path= ''}) => {
     const samples = files.filter((name) => name.includes('.wav'))
@@ -30,7 +21,6 @@ const loadSamples = ({files=[], path= ''}) => {
             length: () => player.buffer && player.buffer._buffer ? player.buffer._buffer.duration : null
         };
     });
-    loadUI();
 };
 
 const listener = Listener(loadSamples, play);
