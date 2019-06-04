@@ -5,18 +5,24 @@ Gull is a *UDP sound machine* designed to be controlled externally. It was creat
 ## Install & Run
 
 TODO / add details / package into electron app
+
 If you want to build Gull yourself, follow these steps:
 
 ```
-git clone https://github.com/qleonetti/gull.git
+git clone https://github.com/lctrt/gull.git
 cd gull
 npm install
 npm start
 ```
 
-## Config
+## File management 
+
 Samples should be in `wav` format.
-If you build yourself you can put your samples into `/samples`. You can select your own folder with `File > Select Sample Folder`
+If you build yourself you can put your samples into `/samples`. 
+
+### Project mode
+
+You can select a folder with `File > Select Sample Folder`. This will load the samples in that folder, as well as the `default.gull` file if present.
 
 ~~The server will hot reload when new samples are added.~~ This got broken with the dynamic folder selection, will fix.
 
@@ -70,11 +76,6 @@ You can edit the current code character by character remotely.
 
 - TODO
 
-## Roadmap
-I've been quite inspired by Orca and what is being done with it.
-To really enjoy it I need a configurable sampler, so there's a proof of concept of that in the form of a barebones live editable config.
-
-But what could come next: grid like config, between orca and [zoia](https://empresseffects.com/products/zoia) to create custom channels that can be triggered by UPD.
-Then more custom blocks for effects, lfo, sound generators.
+---
 
 Special thanks to [Tone.js](https://tonejs.github.io), the scope of work would be quite different without it!

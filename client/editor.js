@@ -18,7 +18,7 @@ const genGrid = (size=36) => {
     return [...arrayBase].map(() => [...line]);
 }
 
-const gridData = genGrid();
+let gridData = genGrid();
 let cursorPos = [0,0];
 
 const clearGrid = () => {
@@ -75,6 +75,12 @@ const keyMap = {
 
 const Editor = {
     onUpdate : () => {},
+    redraw: () => {
+        clearGrid();
+        drawCursor();
+        drawGrid();
+        drawIndicator();
+    },
     remoteEditChar: (x,y,char) => {
         if (/[a-zA-Z0-9]/.test(char)) {
             gridData[y][x] = char;

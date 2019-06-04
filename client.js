@@ -1,5 +1,3 @@
-const uiContext = document.getElementById('ui');
-
 const editor = document.getElementById('editor');
 let editorContent = '';
 let channels = {};
@@ -23,7 +21,22 @@ const loadSamples = ({files=[], path= ''}) => {
     });
 };
 
-const listener = Listener(loadSamples, play);
+const save = ({filename}) => filename && socket.sendSaveData(filename, JSON.stringify(gridData));
+
+const openFile = ({filename, data})=> {
+    gridData = JSON.parse(data);
+    console.log(JSON.parse(data))
+    Editor.redraw();
+}
+
+const socket = Listener({
+    onLoadSamples: loadSamples, 
+    onPlay: play,
+    onSave: save,
+    onOpenFile: openFile
+});
+
+
 
 const replaceChar = (line, rowId, char) => {
     const chars = line.split('');

@@ -1,9 +1,8 @@
-const { app, dialog, BrowserWindow, Menu, MenuItem } = require('electron');
+const { app, dialog, BrowserWindow, Menu } = require('electron');
 
 require('./server');
 
 function createWindow () {
-  // Create the browser window.
   let win = new BrowserWindow({
     width: 560,
     height: 700,
@@ -12,13 +11,11 @@ function createWindow () {
     }
   })
 
-  // and load the index.html of the app.
   win.loadFile('index.html');
 }
 
 app.on('ready', createWindow)
 
-// mainWindow is your instance of BrowserWindow
 function selectDirectory() {
   dialog.showOpenDialog(app.win, {
     properties: ['openDirectory']
@@ -30,6 +27,24 @@ function selectDirectory() {
       console.log(global.samplePath);
     }
   });
+}
+
+function save() {
+  dialog.showSaveDialog(app.win, {
+    filters: [{name: 'gull', extensions: ['gull']}]
+  }, (filename) => {
+    global.socket.requestSave(filename);
+  });
+}
+
+function open() {
+  dialog.showOpenDialog(app.win, {
+    filters: [{name: 'gull', extensions: ['gull']}]
+  }, ([path] = []) => {
+    if (path) {
+      global.socket.openFile(path);
+    };
+  })
 }
 
 const menuTemplate = [
@@ -50,7 +65,9 @@ const menuTemplate = [
   {
     label: 'File',
     submenu: [
-      { label: 'Select Sample Folder', click: selectDirectory}
+      { label: 'Select Sample Folder', click: selectDirectory },
+      { label: 'Open', click: open },
+      { label: 'Save', click: save }
     ]
   },
   {

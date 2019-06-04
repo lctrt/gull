@@ -9,12 +9,23 @@ global.samplePath = __dirname + '/samples';
 function Socket () {
   const loadSamples = () => {
     fs.readdir(global.samplePath, (err, items) => {
-      console.log(items);
-      io.send({ type: 'filechange', files: items, path: global.samplePath});
-      for (var i=0; i<items.length; i++) {
-          console.log(items[i]);
+      if (err) throw err;
+      if (items.includes('default.gull')) {
+        openFile(`${global.samplePath}/default.gull`)
       }
+      io.send({ type: 'filechange', files: items, path: global.samplePath});
     });
+  };
+
+  const requestSave = (filename) => {
+    io.send({ type: 'saveFile', filename});
+  }
+
+  const openFile = (filename) => {
+    fs.readFile(filename, {encoding: 'utf-8'}, (err,data) => {
+      if (err) throw err;
+      io.send({ type: 'openFile', filename, data})
+    })
   };
 
   // socket io setup
@@ -25,7 +36,17 @@ function Socket () {
   io.on('connection', function(socket){
     console.log('a user connected');
     loadSamples();
+
+    socket.on('saveData', function({filename, data}) {
+      fs.writeFile(filename, data, (err) => {
+        if (err) {
+          console.error('issue while saving', err)
+        }
+      })
+    })
+
   });
+
 
   http.listen(3000, function(){
   console.log('listening on *:3000');
@@ -37,7 +58,9 @@ function Socket () {
 
   return {
     io,
-    loadSamples
+    loadSamples,
+    requestSave,
+    openFile
   };
 }
 
