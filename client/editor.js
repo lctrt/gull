@@ -34,7 +34,7 @@ const drawIndicator = () => {
     }).join('');
     ctx.fillText(`[${x.toString(36)}${y.toString(36)}] ${gridData[y][x]}`, 10, gridHeight + cellSize * 2);
     ctx.fillText(`${Editor.filename}`, 10, gridHeight + cellSize * 4);
-    ctx.fillText(`${sampleListDisplay} ${gridData[y][x]}`, 10, gridHeight + cellSize * 6);
+    ctx.fillText(`${sampleListDisplay}`, 10, gridHeight + cellSize * 6);
 }
 
 const drawGrid = () => {
