@@ -11,6 +11,11 @@ canvas.width = cellSize * 36;
 const ctx = canvas.getContext('2d')
 ctx.font = `${cellSize}px monospace`;
 
+const blockDescriptions = {
+    'P': 'P(chan, sampler): sample player block',
+    'S': 'S(chan, waveform): synth block (waveform not supported yet)',
+    'C': 'C(start, duration): sample cutter',
+};
 
 const genGrid = (size=36) => {
     const arrayBase = new Array(36);
@@ -31,8 +36,9 @@ const drawIndicator = () => {
     const [x,y] = cursorPos;
     const sampleListDisplay = samplers.map(({name},i) => {
         return `[${i}] ${name.substring(0,5)}`
-    }).join('');
-    ctx.fillText(`[${x.toString(36)}${y.toString(36)}] ${gridData[y][x]}`, 10, gridHeight + cellSize * 2);
+    }).join(' ');
+    const blockDescription = Object.keys(blockDescriptions).includes(gridData[y][x]) ? blockDescriptions[gridData[y][x]]: gridData[y][x];
+    ctx.fillText(`[${x.toString(36)}${y.toString(36)}] ${blockDescription}`, 10, gridHeight + cellSize * 2);
     ctx.fillText(`${Editor.filename}`, 10, gridHeight + cellSize * 4);
     ctx.fillText(`${sampleListDisplay}`, 10, gridHeight + cellSize * 6);
 }
