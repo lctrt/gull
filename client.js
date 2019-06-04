@@ -26,6 +26,8 @@ const save = ({filename}) => filename && socket.sendSaveData(filename, JSON.stri
 const openFile = ({filename, data})=> {
     gridData = JSON.parse(data);
     console.log(JSON.parse(data))
+    const splitPath = filename.split('/')
+    Editor.filename = splitPath[splitPath.length - 1].replace('.gull', '');
     Editor.redraw();
 }
 

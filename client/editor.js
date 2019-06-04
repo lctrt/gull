@@ -33,7 +33,8 @@ const drawIndicator = () => {
         return `[${i}] ${name.substring(0,5)}`
     }).join('');
     ctx.fillText(`[${x.toString(36)}${y.toString(36)}] ${gridData[y][x]}`, 10, gridHeight + cellSize * 2);
-    ctx.fillText(`${sampleListDisplay} ${gridData[y][x]}`, 10, gridHeight + cellSize * 4);
+    ctx.fillText(`${Editor.filename}`, 10, gridHeight + cellSize * 4);
+    ctx.fillText(`${sampleListDisplay} ${gridData[y][x]}`, 10, gridHeight + cellSize * 6);
 }
 
 const drawGrid = () => {
@@ -74,6 +75,7 @@ const keyMap = {
 };
 
 const Editor = {
+    filename: '',
     onUpdate : () => {},
     redraw: () => {
         clearGrid();
