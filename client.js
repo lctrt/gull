@@ -4,7 +4,7 @@ let channels = {};
 
 const play = (args = []) => {
     const [chan = 0, start, duration] = args
-    channels[chan] && channels[chan].forEach(ch => ch(start,duration));
+    channels[chan] && channels[chan].play(start,duration);
 }
 
 const loadSamples = ({files=[], path= ''}) => {
@@ -57,31 +57,43 @@ const remoteEdit = (rowId, lineId, char) => {
         editor.value = lines.join('\n');
     } 
 };
+const cleanupChannels = () => {
+    Object.keys(channels).forEach(key => {
+        channels[key].forEach(machine => {
+            console.log(machine);
+            machine.dispose();
+        });
+    });
+};
 
+initChannels = () => {
+    for(let i = 0; i<36 ; i++) {
+        const channelId = i.toString(36).toUpperCase();
+        channels[channelId] = Machine();
+    }
+};
+
+initChannels();
+
+const parseChannelId = (blocks) => {
+    if(blocks[0] ) {
+        console.log(blocks[0])
+        const channel = blocks[0][1];
+        return channel || null;
+    }
+    return null;
+}
 const parseEditorContent = () => {
-    let newChannels = {};
     gridData.forEach(function(line) {
         const blocks = splitBy(
             line.filter(c => c != ''),
             3
         ).filter(group => group.length === 3);
-        const machine = Machine(blocks);
-        if (machine != null) {
-            console.log(machine)
-            const {channelId, play} = machine;
-            if (!newChannels[channelId]) {
-                newChannels[channelId] = [];
-            }
-            newChannels[channelId] = [
-                ...newChannels[channelId],
-                play
-            ];
+        const channelId = parseChannelId(blocks);
+        if (channelId != null) {
+        channels[channelId].load(blocks);
         }
     });
-
-    setTimeout(function() {
-        channels = newChannels
-    }, 200);
 };
 
 Editor.onUpdate = parseEditorContent
