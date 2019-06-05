@@ -1,16 +1,3 @@
-const SoundGenerator = (block) => {
-    if (!block) return false;
-    switch(block[0]) {
-        case 'P': 
-            return Player(block);
-
-        case 'S': 
-            return Synth(block);
-        default:
-            return false;
-    }
-}
-
 const Machine = (blocks) => {
     // first block needs to be a sound generator, other blocks treated as effects
     const [firstBlock, ...rest] = blocks;
