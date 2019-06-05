@@ -8,6 +8,7 @@ const MACHINE_TYPE = {
 const Machine = function() {
     const machine = {
         soundGenerator: {},
+        sample: '',
         synth: new Tone.Synth(),
         player: new Tone.Player(),
         adjustPlaybackRate: (octave, fine) => {
@@ -27,6 +28,7 @@ const Machine = function() {
         triggerPlayer: (octave = 1, fine = 0) => {
             if (! machine.player.buffer || !machine.player.buffer._buffer) return ;
             machine.adjustPlaybackRate(octave, fine);
+            machine.player.stop();
             machine.player.toMaster().start("+0",to35ths(machine.start, machine.length()), to35ths(machine.duration, machine.length()));
         },
         length:() => machine.player.buffer._buffer.duration,
@@ -39,7 +41,10 @@ const Machine = function() {
             if (machine.type === 'Player') {
                 const sampleId = firstBlock[2];
                 const sampleUrl = sampleMap[sampleId];
-                machine.player.load(sampleUrl);
+                if (machine.sample != sampleUrl) {
+                    machine.player.load(sampleUrl);
+                    machine.sample = sampleUrl;
+                }
             }
             rest.forEach(block => {
                 switch(block[0]) {
