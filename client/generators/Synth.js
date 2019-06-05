@@ -4,10 +4,14 @@ const Synth = (block) => {
     const play = (octave = 0, note) => {
         synth.toMaster().triggerAttackRelease(`${note}${octave}`, "8n");
     }
+
+    const dispose = () => synth.dispose();
+
     return {
         type: 'SYNTH',
         channelId,
         synth,
+        dispose,
         play,
     };
 }

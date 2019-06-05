@@ -12,10 +12,14 @@ const Player = (block) => {
         adjustPlaybackRate(octave, fine);
         player.toMaster().start();
     }
+
+    const dispose = () => player.dispose();
+
     return {
         type: 'PLAYER',
         channelId,
         player,
+        dispose,
         length,
         adjustPlaybackRate,
         play
