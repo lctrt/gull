@@ -10,13 +10,9 @@ const play = (args = []) => {
 const loadSamples = ({files=[], path= ''}) => {
     const samples = files.filter((name) => name.includes('.wav'))
     samplers = samples.map(function (filename,i) {
-        sampleMap[i] = `${path}/${filename}`;
-        const player = new Tone.Player(`${path}/${filename}`).toMaster();
-
+        sampleMap[i] = `${path}/${filename}`
         return {
-            player,
             name: filename.split('.wav')[0].substring(0,8),
-            length: () => player.buffer && player.buffer._buffer ? player.buffer._buffer.duration : null
         };
     });
 };
@@ -25,14 +21,13 @@ const save = ({filename}) => filename && socket.sendSaveData(filename, JSON.stri
 
 const openFile = ({filename, data})=> {
     gridData = JSON.parse(data);
-    console.log(JSON.parse(data))
     const splitPath = filename.split('/')
     Editor.filename = splitPath[splitPath.length - 1].replace('.gull', '');
     Editor.redraw();
 }
 
 const socket = Listener({
-    onLoadSamples: loadSamples, 
+    onLoadSamples: (...args) => {loadSamples(...args);}, 
     onPlay: play,
     onSave: save,
     onOpenFile: openFile
@@ -42,7 +37,6 @@ const socket = Listener({
 
 const replaceChar = (line, rowId, char) => {
     const chars = line.split('');
-    console.log(chars, rowId);
     if (chars.length > rowId) {
         chars[rowId] = char;
     }
@@ -60,7 +54,6 @@ const remoteEdit = (rowId, lineId, char) => {
 const cleanupChannels = () => {
     Object.keys(channels).forEach(key => {
         channels[key].forEach(machine => {
-            console.log(machine);
             machine.dispose();
         });
     });
@@ -77,7 +70,6 @@ initChannels();
 
 const parseChannelId = (blocks) => {
     if(blocks[0] ) {
-        console.log(blocks[0])
         const channel = blocks[0][1];
         return channel || null;
     }
