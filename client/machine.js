@@ -25,6 +25,7 @@ const Machine = function() {
             machine.synth.toMaster().triggerAttackRelease(`${note}${octave}`, "8n");
         },
         triggerPlayer: (octave = 1, fine = 0) => {
+            if (! machine.player.buffer || !machine.player.buffer._buffer) return ;
             machine.adjustPlaybackRate(octave, fine);
             machine.player.toMaster().start("+0",to35ths(machine.start, machine.length()), to35ths(machine.duration, machine.length()));
         },
