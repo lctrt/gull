@@ -6,9 +6,28 @@ const MACHINE_TYPE = {
 }
 
 const Machine = function() {
+    const reverb = (room= 0, wet = 0) => {
+        const reverb = new Tone.Freeverb(Math.max(0.01, to35ths(room,0.99)))
+        reverb.wet.value = to35ths(wet,1);
+        return reverb;
+    }
+    const distortion = (intensity = 0, wet =0) => {
+        const distortion = new Tone.Distortion(Math.max(0.01, to35ths(intensity, 1)))
+        distortion.wet.value = to35ths(wet,1);
+        return distortion;
+    };
+    const tremolo = (octave,note) => {
+       return new Tone.Tremolo(`${note}${parseInt(octave,10)-6}`, 1).start();
+    }
     const machine = {
         soundGenerator: {},
         sample: '',
+        effects: {
+            reverb,
+            distortion,
+            tremolo
+        },
+        chain: new Tone.Gain().chain(Tone.Master),
         synth: new Tone.Synth(),
         player: new Tone.Player(),
         adjustPlaybackRate: (octave, fine) => {
@@ -22,18 +41,28 @@ const Machine = function() {
                 machine.triggerSynth(...args);
             }
         },
-        triggerSynth: (octave = 0, note) => {
-            machine.synth.toMaster().triggerAttackRelease(`${note}${octave}`, "8n");
+        triggerSynth: (octave = 3, note = 'C') => {
+            machine.synth
+            .toMaster()
+            .triggerAttackRelease(`${note}${octave}`, "8n");
         },
         triggerPlayer: (octave = 1, fine = 0) => {
             if (! machine.player.loaded) return ;
             machine.adjustPlaybackRate(octave, fine);
             machine.player.stop();
-            machine.player.toMaster().start("+0",to35ths(machine.start, machine.length()), to35ths(machine.duration, machine.length()));
+            machine.player
+            .toMaster()
+            .start(
+                "+0",
+                to35ths(machine.cutter.start, machine.length()), 
+                to35ths(machine.cutter.duration, machine.length())
+                );
         },
         length:() => machine.player.buffer._buffer.duration,
-        start: 0,
-        duration: 'z',
+        cutter: {
+            start: 0,
+            duration: 'z'
+        },
         load: (blocks) => {
             // first block needs to be a sound generator, other blocks treated as effects
             const [firstBlock, ...rest] = blocks;
@@ -46,13 +75,33 @@ const Machine = function() {
                     machine.sample = sampleUrl;
                 }
             }
+            let chain = [];
             rest.forEach(block => {
                 switch(block[0]) {
                     case 'C':
-                        machine.start = block[1];
-                        machine.duration = block[2];
+                        machine.cutter.start = block[1];
+                        machine.cutter.duration = block[2];
+                        break;
+                    case 'R':
+                        chain.push(machine.effects.reverb(block[1], block[2]))
+                        break;
+                    case 'T':
+                        chain.push(machine.effects.tremolo(block[1], block[2]))
+                        break;
+                    case 'D':
+                        chain.push(machine.effects.distortion(block[1], block[2]));
+                        break;
                 }
-            })
+            });
+            chain = new Tone.Gain().chain(...chain, Tone.Master)
+            machine.synth.disconnect();
+            machine.synth.connect(chain);
+            machine.player.disconnect();
+            machine.player.connect(chain);
+
+            // might need to dispose of all previous nodes in chain separately?
+            machine.chain.dispose();
+            machine.chain = chain;
         }
     }
     return machine;
