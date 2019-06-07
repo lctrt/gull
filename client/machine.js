@@ -4,28 +4,15 @@ const MACHINE_TYPE = {
     P: 'Player',
     S: 'Synth',
 }
-
 const Machine = function() {
-    const reverb = (room= 0, wet = 0) => {
-        const reverb = new Tone.Freeverb(Math.max(0.01, to35ths(room,0.99)))
-        reverb.wet.value = to35ths(wet,1);
-        return reverb;
-    }
-    const distortion = (intensity = 0, wet =0) => {
-        const distortion = new Tone.Distortion(Math.max(0.01, to35ths(intensity, 1)))
-        distortion.wet.value = to35ths(wet,1);
-        return distortion;
-    };
-    const tremolo = (octave,note) => {
-       return new Tone.Tremolo(`${note}${parseInt(octave,10)-6}`, 1).start();
-    }
+    const reverb = genEffectNode(Freeverb);
+    const distortion = genEffectNode(Distortion);
     const machine = {
         soundGenerator: {},
         sample: '',
         effects: {
             reverb,
             distortion,
-            tremolo
         },
         chain: new Tone.Gain().chain(Tone.Master),
         synth: new Tone.Synth(),
@@ -63,6 +50,10 @@ const Machine = function() {
             start: 0,
             duration: 'z'
         },
+        getBlockKeys(blocks) {
+            return blocks.map(b => b[0]);
+        },
+        blockKeys: [],
         load: (blocks) => {
             // first block needs to be a sound generator, other blocks treated as effects
             const [firstBlock, ...rest] = blocks;
@@ -84,9 +75,6 @@ const Machine = function() {
                         break;
                     case 'R':
                         chain.push(machine.effects.reverb(block[1], block[2]))
-                        break;
-                    case 'T':
-                        chain.push(machine.effects.tremolo(block[1], block[2]))
                         break;
                     case 'D':
                         chain.push(machine.effects.distortion(block[1], block[2]));
