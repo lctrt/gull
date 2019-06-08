@@ -33,21 +33,26 @@ You can select a folder with `File > Select Sample Folder`. This will load the s
 
 A channel is written on one line of the editor. Channels can share the same id to be triggered together.
 
-Channels are composed by blocks, each block start with a capital letter then is followed by base 36 parameters.
+Channels are composed by blocks, each block start with a capital letter, with associated base36 parameters under it.
 
-Each channel declaration starts with a generator:
+A channel start with a `C` block. 
 
-* P(chan, sampler): sample player block
-* S(chan, waveform): synth block (waveform not supported yet)
+It's then followed by a generator:
 
-A modifier block exist for the sample player:
+* P(sample, start, duration): sample player block
+* S(waveform): synth block (waveform not supported yet)
 
-* C(start, duration): sample cutter
+After that you can follow up with effect blocks:
 
-Possible upcoming effect blocks: 
+* R(room, wet): reverb
+* D(intensity, wet): distortion
 
-* D(time,feedback) : delay
-* R(decay, wet): reverb
+```
+CPR
+10I
+.45
+.2.
+```
 
 ## Remote Control
 

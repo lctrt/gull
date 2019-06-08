@@ -9,6 +9,8 @@ const blockDescriptions = {
     'C': 'C(id): Channel',
     'P': 'P(sample id, start, duration): sample player block',
     'S': 'S(waveform): synth block (waveform not supported yet)',
+    'R': 'R(room, wet): reverb',
+    'D': 'D(intensity, wet): distortion'
 };
 
 const keyCodeMap = {
