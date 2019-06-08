@@ -68,47 +68,47 @@ initChannels = () => {
 
 initChannels();
 
-const parseChannelId = (blocks) => {
-    if(blocks[0] ) {
-        const channel = blocks[0][1];
-        return channel || null;
-    }
-    return null;
-}
-
 const parsingMap = {
+    'C': 1,
     'S': 2,
-    'P': 4,
+    'P': 1,
     'R': 2,
     'D': 2
 };
 
+const parseChannelId = (chan) => chan[0].params[0] || null;
+const loadMachine = (chan) => {
+    if (chan[0] && chan[0].type === 'C') {
+        const channelId = parseChannelId(chan);
+        channelId && channels[channelId].load(chan);
+    }
+};
+
 const parseEditorContent = () => {
     gridData.forEach(function(line, y) {
-        line.forEach(function(cell, x) {
+        let chan = [];
+        line.forEach((cell, x) => {
+            if (cell.type === 'param') return ;
             if (Object.keys(parsingMap).includes(cell.char)) {
                 cell.type = 'block';
                 let start = y + 1;
                 let end = y + parsingMap[cell.char];
                 const params = [];
                 for (let l = start; l <= end ; l++) {
-                    console.log(l,end, gridData[l][x])
                     const cell = gridData[l][x];
                     params.push(cell.char);
                     gridData[l][x] = { ...cell, type: 'param' };
                 }
-                console.log(params);
+                chan.push({
+                    type: cell.char,
+                    params 
+                })
+            } else {
+                loadMachine(chan);
+                chan = [];
             }
             
         });
-        // const blocks = splitBy(
-        //     line.filter(c => c != ''),
-        //     3
-        // ).filter(group => group.length === 3);
-        // const channelId = parseChannelId(blocks);
-        // if (channelId != null) {
-        // channels[channelId].load(blocks);
-        // }
     });
 };
 

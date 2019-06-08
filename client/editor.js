@@ -112,6 +112,15 @@ const Editor = {
         }
     }
 };
+const cleanUnusedParams = (x,y) => {
+    let l = y + 1;
+    let cell = gridData[l][x];
+    while(cell.type == 'param') {
+        cell.type = undefined;
+        l = l + 1;
+        cell = gridData[l][x];
+    }
+}
 
 document.addEventListener('keydown', (e) => {
     let [x,y] = cursorPos;
@@ -130,6 +139,9 @@ document.addEventListener('keydown', (e) => {
             x = Math.min(35,x + distance)
             break;
         case keyMap.delete:
+            if (gridData[y][x].type === 'block') {
+                cleanUnusedParams(x,y);
+            }
             gridData[y][x] = { char: ''};
             Editor.onUpdate();
             break;

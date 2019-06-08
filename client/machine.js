@@ -54,28 +54,31 @@ const Machine = function() {
             return blocks.map(b => b[0]);
         },
         blockKeys: [],
-        load: (blocks) => {
+        load: ([chan, ...blocks]) => {
+            console.log(blocks);
             // first block needs to be a sound generator, other blocks treated as effects
             const [firstBlock, ...rest] = blocks;
-            machine.type = MACHINE_TYPE[firstBlock[0]] ? MACHINE_TYPE[firstBlock[0]] : null;
+            if (!firstBlock) return ;
+            machine.type = MACHINE_TYPE[firstBlock.type] ? MACHINE_TYPE[firstBlock.type] : null;
+            console.log(machine.type);
             if (machine.type === 'Player') {
-                const sampleId = firstBlock[2];
+                const sampleId = firstBlock.params[0];
                 const sampleUrl = sampleMap[sampleId];
-                if (machine.sample != sampleUrl) {
+                if (sampleUrl && machine.sample != sampleUrl) {
                     machine.player.load(sampleUrl);
                     machine.sample = sampleUrl;
                 }
             }
             let chain = [];
-            rest.forEach(([key, ...params]) => {
-                switch(key) {
+            rest.forEach(({type, params}) => {
+                switch(type) {
                     case 'C':
                         machine.cutter.start = params[0];
                         machine.cutter.duration = params[1];
                         break;
                     default:
-                        if (Object.keys(effectKeyMap).includes(key)) {
-                            chain.push(effectKeyMap[key](...params).node)
+                        if (Object.keys(effectKeyMap).includes(type)) {
+                            chain.push(effectKeyMap[type](...params).node)
                         }
                         break;
                 }
