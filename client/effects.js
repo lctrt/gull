@@ -66,5 +66,5 @@ const genEffectNode = Effect => (...params) => {
     effect.params().forEach((key, i) => {
         effect[key](params[i]);
     });
-    return effect.node;
+    return effect;
 };

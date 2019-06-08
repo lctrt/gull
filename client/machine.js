@@ -4,16 +4,16 @@ const MACHINE_TYPE = {
     P: 'Player',
     S: 'Synth',
 }
+
+const effectKeyMap = {
+    'R': genEffectNode(Freeverb),
+    'D': genEffectNode(Distortion)
+};
+
 const Machine = function() {
-    const reverb = genEffectNode(Freeverb);
-    const distortion = genEffectNode(Distortion);
     const machine = {
         soundGenerator: {},
         sample: '',
-        effects: {
-            reverb,
-            distortion,
-        },
         chain: new Tone.Gain().chain(Tone.Master),
         synth: new Tone.Synth(),
         player: new Tone.Player(),
@@ -67,17 +67,16 @@ const Machine = function() {
                 }
             }
             let chain = [];
-            rest.forEach(block => {
-                switch(block[0]) {
+            rest.forEach(([key, ...params]) => {
+                switch(key) {
                     case 'C':
-                        machine.cutter.start = block[1];
-                        machine.cutter.duration = block[2];
+                        machine.cutter.start = params[0];
+                        machine.cutter.duration = params[1];
                         break;
-                    case 'R':
-                        chain.push(machine.effects.reverb(block[1], block[2]))
-                        break;
-                    case 'D':
-                        chain.push(machine.effects.distortion(block[1], block[2]));
+                    default:
+                        if (Object.keys(effectKeyMap).includes(key)) {
+                            chain.push(effectKeyMap[key](...params).node)
+                        }
                         break;
                 }
             });
