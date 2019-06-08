@@ -68,24 +68,41 @@ initChannels = () => {
 
 initChannels();
 
-const parseChannelId = (blocks) => {
-    if(blocks[0] ) {
-        const channel = blocks[0][1];
-        return channel || null;
+const parseChannelId = (chan) => chan[0].params[0] || null;
+const loadMachine = (chan) => {
+    if (chan[0] && chan[0].type === 'C') {
+        const channelId = parseChannelId(chan);
+        channelId && channels[channelId].load(chan);
     }
-    return null;
-}
+};
+
 const parseEditorContent = () => {
-    gridData.forEach(function(line) {
-        const blocks = splitBy(
-            line.filter(c => c != ''),
-            3
-        ).filter(group => group.length === 3);
-        const channelId = parseChannelId(blocks);
-        if (channelId != null) {
-        channels[channelId].load(blocks);
-        }
+    gridData.forEach(function(line, y) {
+        let chan = [];
+        line.forEach((cell, x) => {
+            if (cell.type === 'param') return ;
+            if (Object.keys(parsingMap).includes(cell.char)) {
+                Editor.cleanUnusedParams(x,y);
+                cell.type = 'block';
+                let start = y + 1;
+                let end = y + parsingMap[cell.char];
+                const params = [];
+                for (let l = start; l <= end ; l++) {
+                    const cell = gridData[l][x];
+                    params.push(cell.char);
+                    gridData[l][x] = { ...cell, type: 'param' };
+                }
+                chan.push({
+                    type: cell.char,
+                    params 
+                })
+            } else {
+                loadMachine(chan);
+                chan = [];
+            }
+            
+        });
     });
 };
 
-Editor.onUpdate = parseEditorContent
+Editor.onUpdate = parseEditorContent;

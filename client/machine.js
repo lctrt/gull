@@ -1,10 +1,3 @@
-const MACHINE_TYPE = {
-    Player: 'P',
-    Synth: 'S',
-    P: 'Player',
-    S: 'Synth',
-}
-
 const effectKeyMap = {
     'R': genEffectNode(Freeverb),
     'D': genEffectNode(Distortion)
@@ -54,33 +47,27 @@ const Machine = function() {
             return blocks.map(b => b[0]);
         },
         blockKeys: [],
-        load: (blocks) => {
+        load: ([chan, ...blocks]) => {
             // first block needs to be a sound generator, other blocks treated as effects
             const [firstBlock, ...rest] = blocks;
-            machine.type = MACHINE_TYPE[firstBlock[0]] ? MACHINE_TYPE[firstBlock[0]] : null;
+            if (!firstBlock) return ;
+            machine.type = MACHINE_TYPE[firstBlock.type] ? MACHINE_TYPE[firstBlock.type] : null;
             if (machine.type === 'Player') {
-                const sampleId = firstBlock[2];
+                const sampleId = firstBlock.params[0];
                 const sampleUrl = sampleMap[sampleId];
-                if (machine.sample != sampleUrl) {
+                if (sampleUrl && machine.sample != sampleUrl) {
                     machine.player.load(sampleUrl);
                     machine.sample = sampleUrl;
                 }
+                machine.cutter.start = firstBlock.params[1] || "0";
+                machine.cutter.duration = firstBlock.params[2] || "Z";
+
             }
-            let chain = [];
-            rest.forEach(([key, ...params]) => {
-                switch(key) {
-                    case 'C':
-                        machine.cutter.start = params[0];
-                        machine.cutter.duration = params[1];
-                        break;
-                    default:
-                        if (Object.keys(effectKeyMap).includes(key)) {
-                            chain.push(effectKeyMap[key](...params).node)
-                        }
-                        break;
-                }
-            });
-            chain = new Tone.Gain().chain(...chain, Tone.Master)
+            const chainNodes = rest.map(({type, params}) => 
+                Object.keys(effectKeyMap).includes(type) 
+                && effectKeyMap[type](...params).node).filter(n => n);
+
+            chain = new Tone.Gain().chain(...chainNodes, Tone.Master)
             machine.synth.disconnect();
             machine.synth.connect(chain);
             machine.player.disconnect();
