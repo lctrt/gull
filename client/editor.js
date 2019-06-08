@@ -120,13 +120,11 @@ document.addEventListener('keydown', (e) => {
         case keyMap.delete:
             gridData[y][x] = '';
             Editor.onUpdate();
-            x = Math.max(0,x - 1);
             break;
         default:
             const char = String.fromCharCode(event.keyCode);
             if (/[a-zA-Z0-9]/.test(char)) {
                 gridData[y][x] = char;
-                x = Math.min(35,x + 1)
                 Editor.onUpdate();
             } else {
             }
