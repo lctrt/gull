@@ -48,7 +48,6 @@ const Machine = function() {
         },
         blockKeys: [],
         load: ([chan, ...blocks]) => {
-            console.log(blocks);
             // first block needs to be a sound generator, other blocks treated as effects
             const [firstBlock, ...rest] = blocks;
             if (!firstBlock) return ;
@@ -60,22 +59,15 @@ const Machine = function() {
                     machine.player.load(sampleUrl);
                     machine.sample = sampleUrl;
                 }
+                machine.cutter.start = firstBlock.params[1] || "0";
+                machine.cutter.duration = firstBlock.params[2] || "Z";
+
             }
-            let chain = [];
-            rest.forEach(({type, params}) => {
-                switch(type) {
-                    case 'C':
-                        machine.cutter.start = params[0];
-                        machine.cutter.duration = params[1];
-                        break;
-                    default:
-                        if (Object.keys(effectKeyMap).includes(type)) {
-                            chain.push(effectKeyMap[type](...params).node)
-                        }
-                        break;
-                }
-            });
-            chain = new Tone.Gain().chain(...chain, Tone.Master)
+            const chainNodes = rest.map(({type, params}) => 
+                Object.keys(effectKeyMap).includes(type) 
+                && effectKeyMap[type](...params).node).filter(n => n);
+
+            chain = new Tone.Gain().chain(...chainNodes, Tone.Master)
             machine.synth.disconnect();
             machine.synth.connect(chain);
             machine.player.disconnect();

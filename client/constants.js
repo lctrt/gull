@@ -7,8 +7,8 @@ const MACHINE_TYPE = {
 
 const blockDescriptions = {
     'C': 'C(id): Channel',
-    'P': 'P(chan, sampler): sample player block',
-    'S': 'S(chan, waveform): synth block (waveform not supported yet)',
+    'P': 'P(sample id, start, duration): sample player block',
+    'S': 'S(waveform): synth block (waveform not supported yet)',
 };
 
 const keyCodeMap = {
