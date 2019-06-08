@@ -93,7 +93,7 @@ const parseEditorContent = () => {
                 for (let l = start; l <= end ; l++) {
                     console.log(l,end, gridData[l][x])
 
-                    gridData[l][x] = { char: '0' };
+                    gridData[l][x] = { type: 'param', char: '0' };
                 }
             }
             

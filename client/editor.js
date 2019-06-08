@@ -31,13 +31,21 @@ const clearGrid = () => {
     ctx.fillRect(0,0, canvas.width, canvas.height)
 }
 
+const getDescription = (cell) => {
+    if (cell.type === 'param') { return ''; }
+    if (Object.keys(blockDescriptions).includes(cell.char)) {
+        return  blockDescriptions[cell.char];
+    }        
+    return '';
+};
 const drawIndicator = () => {
     ctx.fillStyle = '#DDD';
     const [x,y] = cursorPos;
     const sampleListDisplay = samplers.map(({name},i) => {
         return `[${i}] ${name.substring(0,5)}`
     }).join(' ');
-    const blockDescription = Object.keys(blockDescriptions).includes(gridData[y][x]) ? blockDescriptions[gridData[y][x]]: gridData[y][x];
+    const cell = gridData[y][x];
+    const blockDescription = getDescription(cell);
     ctx.fillText(`[${x.toString(36)}${y.toString(36)}] ${blockDescription}`, 10, gridHeight + cellSize * 2);
     ctx.fillText(`${Editor.filename}`, 10, gridHeight + cellSize * 4);
     ctx.fillText(`${sampleListDisplay}`, 10, gridHeight + cellSize * 6);
