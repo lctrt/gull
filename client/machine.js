@@ -1,10 +1,3 @@
-const MACHINE_TYPE = {
-    Player: 'P',
-    Synth: 'S',
-    P: 'Player',
-    S: 'Synth',
-}
-
 const effectKeyMap = {
     'R': genEffectNode(Freeverb),
     'D': genEffectNode(Distortion)
@@ -60,7 +53,6 @@ const Machine = function() {
             const [firstBlock, ...rest] = blocks;
             if (!firstBlock) return ;
             machine.type = MACHINE_TYPE[firstBlock.type] ? MACHINE_TYPE[firstBlock.type] : null;
-            console.log(machine.type);
             if (machine.type === 'Player') {
                 const sampleId = firstBlock.params[0];
                 const sampleUrl = sampleMap[sampleId];

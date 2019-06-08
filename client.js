@@ -68,14 +68,6 @@ initChannels = () => {
 
 initChannels();
 
-const parsingMap = {
-    'C': 1,
-    'S': 2,
-    'P': 1,
-    'R': 2,
-    'D': 2
-};
-
 const parseChannelId = (chan) => chan[0].params[0] || null;
 const loadMachine = (chan) => {
     if (chan[0] && chan[0].type === 'C') {
@@ -90,6 +82,7 @@ const parseEditorContent = () => {
         line.forEach((cell, x) => {
             if (cell.type === 'param') return ;
             if (Object.keys(parsingMap).includes(cell.char)) {
+                Editor.cleanUnusedParams(x,y);
                 cell.type = 'block';
                 let start = y + 1;
                 let end = y + parsingMap[cell.char];
@@ -112,4 +105,4 @@ const parseEditorContent = () => {
     });
 };
 
-Editor.onUpdate = parseEditorContent
+Editor.onUpdate = parseEditorContent;

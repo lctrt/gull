@@ -11,14 +11,8 @@ canvas.width = cellSize * 36;
 const ctx = canvas.getContext('2d')
 ctx.font = `${cellSize}px monospace`;
 
-const blockDescriptions = {
-    'P': 'P(chan, sampler): sample player block',
-    'S': 'S(chan, waveform): synth block (waveform not supported yet)',
-    'C': 'C(start, duration): sample cutter',
-};
-
-const genGrid = (size=36) => {
-    const arrayBase = new Array(36);
+const genGrid = (size = 36) => {
+    const arrayBase = new Array(size);
     const line = [...arrayBase].map(() => ({ char: '' }));
     return [...arrayBase].map(() => [...line]);
 }
@@ -84,14 +78,6 @@ setTimeout(() => {
     drawIndicator();
 }, 200);
 
-const keyMap = {
-    left: 37,
-    up: 38,
-    right: 39,
-    down: 40,
-    delete: 8,
-};
-
 const Editor = {
     filename: '',
     onUpdate : () => {},
@@ -100,6 +86,15 @@ const Editor = {
         drawCursor();
         drawGrid();
         drawIndicator();
+    },
+    cleanUnusedParams: (x,y) => {
+        let l = y + 1;
+        let cell = gridData[l][x];
+        while(cell.type == 'param') {
+            cell.type = undefined;
+            l = l + 1;
+            cell = gridData[l][x];
+        }
     },
     remoteEditChar: (x,y,char) => {
         if (/[a-zA-Z0-9]/.test(char)) {
@@ -112,35 +107,26 @@ const Editor = {
         }
     }
 };
-const cleanUnusedParams = (x,y) => {
-    let l = y + 1;
-    let cell = gridData[l][x];
-    while(cell.type == 'param') {
-        cell.type = undefined;
-        l = l + 1;
-        cell = gridData[l][x];
-    }
-}
 
 document.addEventListener('keydown', (e) => {
     let [x,y] = cursorPos;
     const distance = e.metaKey ? 6 : 1;
     switch(e.keyCode) {
-        case keyMap.left:
+        case keyCodeMap.left:
             x = Math.max(0,x - distance);
             break;
-        case keyMap.up:
+        case keyCodeMap.up:
             y = Math.max(0,y - distance);
             break;
-        case keyMap.down:
+        case keyCodeMap.down:
             y = Math.min(35,y + distance)
             break;
-        case keyMap.right:
+        case keyCodeMap.right:
             x = Math.min(35,x + distance)
             break;
-        case keyMap.delete:
+        case keyCodeMap.delete:
             if (gridData[y][x].type === 'block') {
-                cleanUnusedParams(x,y);
+                Editor.cleanUnusedParams(x,y);
             }
             gridData[y][x] = { char: ''};
             Editor.onUpdate();
