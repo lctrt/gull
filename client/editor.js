@@ -54,14 +54,18 @@ const drawIndicator = () => {
 const drawGrid = () => {
     for (let x = 0; x<36; x++) {
         for (let y = 0; y<36; y++) {
-            let { char } = gridData[y][x];
+            let { char, type } = gridData[y][x];
             if (x == cursorPos[0] && y == cursorPos[1]) {
                 if (char == '') {
                     char = '@';
                 }
                 ctx.fillStyle = 'black';
             } else {
-                ctx.fillStyle = char == ''  ? '#555' : '#DDD';
+                if (type === 'block') {
+                    ctx.fillStyle = 'lightgreen'
+                } else {
+                    ctx.fillStyle = type !== 'param'  ? '#555' : '#DDD';
+                }
             }
             ctx.fillText(char == '' ? '.' : char, offset * 0.5 + x * cellSize,  offset * 1.5 + y * cellSize);
         }

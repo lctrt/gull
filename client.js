@@ -87,14 +87,17 @@ const parseEditorContent = () => {
     gridData.forEach(function(line, y) {
         line.forEach(function(cell, x) {
             if (Object.keys(parsingMap).includes(cell.char)) {
+                cell.type = 'block';
                 let start = y + 1;
                 let end = y + parsingMap[cell.char];
-                console.log(start, end)
+                const params = [];
                 for (let l = start; l <= end ; l++) {
                     console.log(l,end, gridData[l][x])
-
-                    gridData[l][x] = { type: 'param', char: '0' };
+                    const cell = gridData[l][x];
+                    params.push(cell.char);
+                    gridData[l][x] = { ...cell, type: 'param' };
                 }
+                console.log(params);
             }
             
         });
