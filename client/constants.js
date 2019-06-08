@@ -21,7 +21,7 @@ const keyCodeMap = {
 
 const parsingMap = {
     'C': 1,
-    'S': 2,
+    'S': 1,
     'P': 3,
     'R': 2,
     'D': 2
