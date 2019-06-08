@@ -19,7 +19,7 @@ const blockDescriptions = {
 
 const genGrid = (size=36) => {
     const arrayBase = new Array(36);
-    const line = [...arrayBase].map(() => '');
+    const line = [...arrayBase].map(() => ({ char: '' }));
     return [...arrayBase].map(() => [...line]);
 }
 
@@ -46,7 +46,7 @@ const drawIndicator = () => {
 const drawGrid = () => {
     for (let x = 0; x<36; x++) {
         for (let y = 0; y<36; y++) {
-            let char = gridData[y][x];
+            let { char } = gridData[y][x];
             if (x == cursorPos[0] && y == cursorPos[1]) {
                 if (char == '') {
                     char = '@';
@@ -118,13 +118,13 @@ document.addEventListener('keydown', (e) => {
             x = Math.min(35,x + distance)
             break;
         case keyMap.delete:
-            gridData[y][x] = '';
+            gridData[y][x] = { char: ''};
             Editor.onUpdate();
             break;
         default:
             const char = String.fromCharCode(event.keyCode);
             if (/[a-zA-Z0-9]/.test(char)) {
-                gridData[y][x] = char;
+                gridData[y][x] = {char};
                 Editor.onUpdate();
             } else {
             }

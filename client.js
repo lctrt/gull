@@ -75,16 +75,37 @@ const parseChannelId = (blocks) => {
     }
     return null;
 }
+
+const parsingMap = {
+    'S': 2,
+    'P': 4,
+    'R': 2,
+    'D': 2
+};
+
 const parseEditorContent = () => {
-    gridData.forEach(function(line) {
-        const blocks = splitBy(
-            line.filter(c => c != ''),
-            3
-        ).filter(group => group.length === 3);
-        const channelId = parseChannelId(blocks);
-        if (channelId != null) {
-        channels[channelId].load(blocks);
-        }
+    gridData.forEach(function(line, y) {
+        line.forEach(function(cell, x) {
+            if (Object.keys(parsingMap).includes(cell.char)) {
+                let start = y + 1;
+                let end = y + parsingMap[cell.char];
+                console.log(start, end)
+                for (let l = start; l <= end ; l++) {
+                    console.log(l,end, gridData[l][x])
+
+                    gridData[l][x] = { char: '0' };
+                }
+            }
+            
+        });
+        // const blocks = splitBy(
+        //     line.filter(c => c != ''),
+        //     3
+        // ).filter(group => group.length === 3);
+        // const channelId = parseChannelId(blocks);
+        // if (channelId != null) {
+        // channels[channelId].load(blocks);
+        // }
     });
 };
 
