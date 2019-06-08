@@ -98,7 +98,10 @@ const Editor = {
     },
     remoteEditChar: (x,y,char) => {
         if (/[a-zA-Z0-9]/.test(char)) {
-            gridData[y][x] = char;
+            gridData[y][x] = {
+                ...gridData[y][x],
+                char
+            };
             Editor.onUpdate();
             clearGrid();
             drawCursor(cursorPos[0],cursorPos[1]);
