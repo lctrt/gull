@@ -13,7 +13,8 @@ const blockDescriptions = {
     'P': 'P(sample id, start, duration): sample player block',
     'S': 'S(waveform): synth block (waveform not supported yet)',
     'R': 'R(room, wet): reverb',
-    'D': 'D(intensity, wet): distortion'
+    'D': 'D(intensity, wet): distortion',
+    'F': 'F(type, frequency, Q): filter'
 };
 
 const keyCodeMap = {
@@ -30,5 +31,6 @@ const parsingMap = {
     'S': 1,
     'P': 3,
     'R': 2,
-    'D': 2
+    'D': 2,
+    'F': 3
 };

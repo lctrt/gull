@@ -59,8 +59,36 @@ class Tremolo extends Effect {
             this._frequency = frequency; // TODO -> proper scaling
             this.node.frequency = this._frequency;
         } else {
-            return this.frequency;
+            return this._frequency;
         }
+    }
+}
+
+class Filter extends Effect {
+    constructor() {
+        super();
+        this.node = new Tone.Filter();
+    }
+    params = () => ['type', 'frequency', 'q']
+    type(type = "L") {
+        const typeMap = {
+            'L': 'lowpass', 
+            'H': 'highpass', 
+            'B': 'bandpass'
+        }
+        if (Object.keys(typeMap).includes(type)) {
+            this._type = typeMap[type];
+            this.node.type = this._type;
+        }
+    }
+    frequency(frequency = 2) {
+        this._frequency = to35ths(frequency, 15000); // TODO -> proper scaling
+        // console.log(this.node.frequency)
+        this.node.frequency.value = this._frequency;
+    }
+    q(q = 0) {
+        this._q = to35ths(q, 4);
+        this.node.q = this._q;
     }
 }
 

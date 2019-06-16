@@ -46,6 +46,7 @@ After that you can follow up with effect blocks:
 
 * R(room, wet): reverb
 * D(intensity, wet): distortion
+* F(type, frequency, Q): filter
 
 ```
 CPR

@@ -1,6 +1,7 @@
 const effectKeyMap = {
     'R': genEffectNode(Freeverb),
-    'D': genEffectNode(Distortion)
+    'D': genEffectNode(Distortion),
+    'F': genEffectNode(Filter)
 };
 
 const Machine = function() {
