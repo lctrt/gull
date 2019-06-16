@@ -82,8 +82,8 @@ class Filter extends Effect {
         }
     }
     frequency(frequency = 2) {
-        this._frequency = to35ths(frequency, 15000); // TODO -> proper scaling
-        // console.log(this.node.frequency)
+        this._frequency = p2f36(frequency);
+        console.log(this._frequency)
         this.node.frequency.value = this._frequency;
     }
     q(q = 0) {
