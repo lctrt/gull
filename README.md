@@ -54,6 +54,10 @@ CPR
 .2.
 ```
 
+## External channel
+
+A special external channel is possible by starting with `E` instead of `C`. This will use external audio input, useful to chain to effects.
+
 ## Remote Control
 
 Gull has up to 36 channels. Commands can be sent through UDP via the port `49161`.

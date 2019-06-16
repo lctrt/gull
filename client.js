@@ -64,15 +64,24 @@ initChannels = () => {
         const channelId = i.toString(36).toUpperCase();
         channels[channelId] = Machine();
     }
+    channels['external'] = Machine('external');
 };
 
 initChannels();
 
 const parseChannelId = (chan) => chan[0].params[0] || null;
+
 const loadMachine = (chan) => {
-    if (chan[0] && chan[0].type === 'C') {
-        const channelId = parseChannelId(chan);
-        channelId && channels[channelId].load(chan);
+    if (chan[0]) {
+        switch(chan[0].type) {
+            case 'C':
+                const channelId = parseChannelId(chan);
+                channelId && channels[channelId].load(chan);
+                break;
+            case 'E':
+                channels['external'].load(chan);
+                break;
+        }
     }
 };
 

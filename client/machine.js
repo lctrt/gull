@@ -10,6 +10,7 @@ const Machine = function() {
         chain: new Tone.Gain().chain(Tone.Master),
         synth: new Tone.Synth(),
         player: new Tone.Player(),
+        external: new Tone.UserMedia(0.5),
         adjustPlaybackRate: (octave, fine) => {
             machine.player.playbackRate = fromBase36(octave) + to35ths(fine, 1);
         },
@@ -58,6 +59,9 @@ const Machine = function() {
                 }
                 machine.cutter.start = firstBlock.params[1] || "0";
                 machine.cutter.duration = firstBlock.params[2] || "Z";
+            } else if(machine.type === 'External') {
+                const volume = firstBlock.params[0] !== '' ? to35ths(firstBlock.params[0], 50) - 50 : 0;
+                machine.external.volume.value = volume;
             }
         },
         createChain([firstBlock, ...blocks]) {
@@ -70,11 +74,16 @@ const Machine = function() {
 
             machine.chainNodes = chainNodes;
             chain = new Tone.Gain().chain(...chainNodes.map(block => block.node), Tone.Master)
-            machine.synth.disconnect();
-            machine.synth.connect(chain);
-            machine.player.disconnect();
-            machine.player.connect(chain);
-
+            if (MACHINE_TYPE[firstBlock.type] === "External") {
+                machine.external.disconnect();
+                machine.external.connect(chain);
+                machine.external.open();
+            } else {
+                machine.synth.disconnect();
+                machine.synth.connect(chain);
+                machine.player.disconnect();
+                machine.player.connect(chain);
+            }
             // might need to dispose of all previous nodes in chain separately?
             machine.chain.dispose();
             machine.chain = chain;
@@ -93,6 +102,7 @@ const Machine = function() {
             return blocks.map(b => b.type).join('');
         },
         load: ([chan, ...blocks]) => {
+            blocks = chan.type === 'E' ? [chan,...blocks] : blocks;
             if (machine.blockTypes(blocks) == machine.blockKeys) {
                 // only change params, no re-creation of audio nodes
                 machine.updateParams(blocks);
