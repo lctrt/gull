@@ -78,6 +78,7 @@ const loadMachine = (chan) => {
 
 const parseEditorContent = () => {
     gridData.forEach(function(line, y) {
+        // todo: clear machine that are not defined in grid
         let chan = [];
         line.forEach((cell, x) => {
             if (cell.type === 'param') return ;

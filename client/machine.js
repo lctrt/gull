@@ -46,11 +46,8 @@ const Machine = function() {
         getBlockKeys(blocks) {
             return blocks.map(b => b[0]);
         },
-        blockKeys: [],
-        load: ([chan, ...blocks]) => {
-            // first block needs to be a sound generator, other blocks treated as effects
-            const [firstBlock, ...rest] = blocks;
-            if (!firstBlock) return ;
+        blockKeys: '',
+        handleGeneratorConfig(firstBlock = {}) {
             machine.type = MACHINE_TYPE[firstBlock.type] ? MACHINE_TYPE[firstBlock.type] : null;
             if (machine.type === 'Player') {
                 const sampleId = firstBlock.params[0];
@@ -61,13 +58,18 @@ const Machine = function() {
                 }
                 machine.cutter.start = firstBlock.params[1] || "0";
                 machine.cutter.duration = firstBlock.params[2] || "Z";
-
             }
-            const chainNodes = rest.map(({type, params}) => 
+        },
+        createChain([firstBlock, ...blocks]) {
+            // first block needs to be a sound generator, other blocks treated as effects
+            if (!firstBlock) return ;
+            machine.handleGeneratorConfig(firstBlock);
+            const chainNodes = blocks.map(({type, params}) => 
                 Object.keys(effectKeyMap).includes(type) 
-                && effectKeyMap[type](...params).node).filter(n => n);
+                && effectKeyMap[type](...params)).filter(n => n);
 
-            chain = new Tone.Gain().chain(...chainNodes, Tone.Master)
+            machine.chainNodes = chainNodes;
+            chain = new Tone.Gain().chain(...chainNodes.map(block => block.node), Tone.Master)
             machine.synth.disconnect();
             machine.synth.connect(chain);
             machine.player.disconnect();
@@ -76,6 +78,29 @@ const Machine = function() {
             // might need to dispose of all previous nodes in chain separately?
             machine.chain.dispose();
             machine.chain = chain;
+
+        },
+        updateParams([firstBlock, ...blocks]) {
+            machine.handleGeneratorConfig(firstBlock);
+            blocks.forEach(({params}, index) => {
+                params.forEach((param, paramIndex) => {
+                    const paramKey = machine.chainNodes[index].params()[paramIndex]
+                    machine.chainNodes[index][paramKey](param);
+                });
+            });
+        },
+        blockTypes(blocks = []) {
+            return blocks.map(b => b.type).join('');
+        },
+        load: ([chan, ...blocks]) => {
+            if (machine.blockTypes(blocks) == machine.blockKeys) {
+                // only change params, no re-creation of audio nodes
+                machine.updateParams(blocks);
+            } else {
+                console.log('create')
+                machine.blockKeys = machine.blockTypes(blocks);
+                machine.createChain(blocks);
+            }
         }
     }
     return machine;

@@ -11,6 +11,20 @@ canvas.width = cellSize * 36;
 const ctx = canvas.getContext('2d')
 ctx.font = `${cellSize}px monospace`;
 
+class GridData {
+    constructor(size = 36) {
+        const arrayBase = new Array(size);
+        const line = [...arrayBase].map(() => ({ char: '' }));
+        this.data = [...arrayBase].map(() => [...line]);
+    }
+    set(x,y, content) {
+        this.data[y][x] = content;
+    } 
+    get(x,y) {
+        return this.data[y][x];
+    }
+}
+
 const genGrid = (size = 36) => {
     const arrayBase = new Array(size);
     const line = [...arrayBase].map(() => ({ char: '' }));
