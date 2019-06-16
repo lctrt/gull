@@ -81,10 +81,6 @@ You can edit the current code character by character remotely.
 
 `ED004` <- Will replace the character on line 0, row 0 with the character `4`.
 
-### Settings
-
-- TODO
-
 ---
 
 Special thanks to [Tone.js](https://tonejs.github.io), the scope of work would be quite different without it!

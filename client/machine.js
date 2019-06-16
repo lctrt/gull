@@ -94,7 +94,7 @@ const Machine = function() {
             blocks.forEach(({params}, index) => {
                 params.forEach((param, paramIndex) => {
                     const paramKey = machine.chainNodes[index].params()[paramIndex]
-                    machine.chainNodes[index][paramKey](param);
+                    machine.chainNodes[index][paramKey](param || 0);
                 });
             });
         },
