@@ -97,7 +97,6 @@ const Machine = function() {
                 // only change params, no re-creation of audio nodes
                 machine.updateParams(blocks);
             } else {
-                console.log('create')
                 machine.blockKeys = machine.blockTypes(blocks);
                 machine.createChain(blocks);
             }

@@ -45,11 +45,11 @@ const replaceChar = (line, rowId, char) => {
 
 const remoteEdit = (rowId, lineId, char) => {
     Editor.remoteEditChar(rowId, lineId, char)
-    const lines = editor.value.split('\n')
-    if (lines.length > lineId)  {
-        lines[lineId] = replaceChar(lines[lineId],rowId, char);
-        editor.value = lines.join('\n');
-    } 
+    // const lines = editor.value.split('\n')
+    // if (lines.length > lineId)  {
+    //     lines[lineId] = replaceChar(lines[lineId],rowId, char);
+    //     editor.value = lines.join('\n');
+    // } 
 };
 const cleanupChannels = () => {
     Object.keys(channels).forEach(key => {
