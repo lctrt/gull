@@ -28,15 +28,16 @@ const Machine = function() {
             .toMaster()
             .triggerAttackRelease(`${note}${octave}`, "8n");
         },
-        triggerPlayer: (octave = 1, fine = 0) => {
+        triggerPlayer: (octave = 1, fine = 0, velocity = 'z') => {
             if (! machine.player.loaded) return ;
             machine.adjustPlaybackRate(octave, fine);
             machine.player.stop();
+            machine.player.volume.value=Tone.gainToDb(to35ths(velocity,1));
             machine.player
             .toMaster()
             .start(
                 "+0",
-                to35ths(machine.cutter.start, machine.length()), 
+                to35ths(machine.cutter.start, machine.length()),
                 to35ths(machine.cutter.duration, machine.length())
                 );
         },
@@ -69,8 +70,8 @@ const Machine = function() {
             // first block needs to be a sound generator, other blocks treated as effects
             if (!firstBlock) return ;
             machine.handleGeneratorConfig(firstBlock);
-            const chainNodes = blocks.map(({type, params}) => 
-                Object.keys(effectKeyMap).includes(type) 
+            const chainNodes = blocks.map(({type, params}) =>
+                Object.keys(effectKeyMap).includes(type)
                 && effectKeyMap[type](...params)).filter(n => n);
 
             machine.chainNodes = chainNodes;
