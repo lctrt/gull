@@ -3,8 +3,8 @@ let editorContent = '';
 let channels = {};
 
 const play = (args = []) => {
-    const [chan = 0, start, duration] = args
-    channels[chan] && channels[chan].play(start,duration);
+    const [chan = 0, start, duration, velocity] = args
+    channels[chan] && channels[chan].play(start,duration,velocity);
 }
 
 const loadSamples = ({files=[], path= ''}) => {
@@ -27,7 +27,7 @@ const openFile = ({filename, data})=> {
 }
 
 const socket = Listener({
-    onLoadSamples: (...args) => {loadSamples(...args);}, 
+    onLoadSamples: (...args) => {loadSamples(...args);},
     onPlay: play,
     onSave: save,
     onOpenFile: openFile
@@ -49,7 +49,7 @@ const remoteEdit = (rowId, lineId, char) => {
     // if (lines.length > lineId)  {
     //     lines[lineId] = replaceChar(lines[lineId],rowId, char);
     //     editor.value = lines.join('\n');
-    // } 
+    // }
 };
 const cleanupChannels = () => {
     Object.keys(channels).forEach(key => {
@@ -104,13 +104,13 @@ const parseEditorContent = () => {
                 }
                 chan.push({
                     type: cell.char,
-                    params 
+                    params
                 })
             } else {
                 loadMachine(chan);
                 chan = [];
             }
-            
+
         });
     });
 };
